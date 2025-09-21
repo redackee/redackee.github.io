@@ -35,6 +35,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           publish_dir: ./_site
-          destination_repo: redackee/preview-website
+          external_repository: redackee/preview-website
           publish_branch: gh-pages
           github_token: ${{ secrets.PREVIEW_DEPLOY_TOKEN }}
