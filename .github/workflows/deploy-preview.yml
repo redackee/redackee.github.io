@@ -1,0 +1,40 @@
+name: Deploy preview to preview-website
+
+on:
+  push:
+    branches:
+      - gimmick-20250804
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install --jobs 4 --retry 3
+
+      - name: Build Jekyll site
+        run: bundle exec jekyll build -d ./_site
+
+      - name: Deploy to preview repository
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          publish_dir: ./_site
+          destination_repo: redackee/preview-website
+          publish_branch: gh-pages
+          github_token: ${{ secrets.PREVIEW_DEPLOY_TOKEN }}
