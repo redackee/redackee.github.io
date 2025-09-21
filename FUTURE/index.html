@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Beautiful Jekyll 6.0.1 | Copyright Dean Attali 2023 -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  
+
+  
+
+  
+
+  <title>Voice Feedback Gimmick: UI/UX and Implementation Action Plan | Red Ackee Software</title>
+
+  
+  
+  <meta name="author" content="Nkosi Dilworth">
+  
+
+  <meta name="description" content="# Voice Feedback Gimmick: UI/UX and Implementation Action Plan ## Overview This document outlines the action plan for implementing a voice feedback feature on the site, based on the plan in `FUTURE.md` and the new UI/UX and behavioral directives provided. --- ## 1. UI/UX Design ### Microphone Avatar - **Appearance:**...">
+
+  
+
+  
+
+  
+  <link rel="alternate" type="application/rss+xml" title="Red Ackee Software" href="/feed.xml">
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/custom-styles.css">
+    
+  
+
+  
+  
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Red Ackee Software">
+  <meta property="og:title" content="Voice Feedback Gimmick: UI/UX and Implementation Action Plan | Red Ackee Software">
+  <meta property="og:description" content="# Voice Feedback Gimmick: UI/UX and Implementation Action Plan ## Overview This document outlines the action plan for implementing a voice feedback feature on the site, based on the plan in `FUTURE.md` and the new UI/UX and behavioral directives provided. --- ## 1. UI/UX Design ### Microphone Avatar - **Appearance:**...">
+
+  
+  <meta property="og:image" content="/assets/img/avatar-redackee-200x200.png">
+  
+
+  
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="/FUTURE/">
+  <link rel="canonical" href="/FUTURE/">
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:site" content="@redackee">
+  <meta name="twitter:creator" content="@redackee">
+
+  <meta property="twitter:title" content="Voice Feedback Gimmick: UI/UX and Implementation Action Plan | Red Ackee Software">
+  <meta property="twitter:description" content="# Voice Feedback Gimmick: UI/UX and Implementation Action Plan ## Overview This document outlines the action plan for implementing a voice feedback feature on the site, based on the plan in `FUTURE.md` and the new UI/UX and behavioral directives provided. --- ## 1. UI/UX Design ### Microphone Avatar - **Appearance:**...">
+
+  
+  <meta name="twitter:image" content="/assets/img/avatar-redackee-200x200.png">
+  
+
+  
+
+
+  
+
+  
+  
+
+  
+
+</head>
+
+
+<body>
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="/">Red Ackee Software</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.linkedin.com/in/nkosidilworth/">About Me</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Resources</a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="https://www.markdowntutorial.com/">Learn markdown</a>
+                  <a class="dropdown-item" href="https://chat.openai.com/">ChatGPT</a>
+                  <a class="dropdown-item" href="https://gemini.google.com/">Google Gemini</a>
+                  <a class="dropdown-item" href="https://copilot.microsoft.com/">Microsoft Copilot</a>
+            </div>
+          </li>
+        </ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-redackee-200x200.png" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+
+
+
+  
+
+
+
+<header class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="">
+        <span class="site-title">
+          <span class="red-word">Red</span>
+          <span class="ackee-word">Ackee</span>
+          <span class="software-word">Software</span>
+        </span>
+      </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="/">Red Ackee Software</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.linkedin.com/in/nkosidilworth/">About Me</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Resources</a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="https://www.markdowntutorial.com/">Learn markdown</a>
+                  <a class="dropdown-item" href="https://chat.openai.com/">ChatGPT</a>
+                  <a class="dropdown-item" href="https://gemini.google.com/">Google Gemini</a>
+                  <a class="dropdown-item" href="https://copilot.microsoft.com/">Microsoft Copilot</a>
+            </div>
+          </li>
+        </ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-redackee-200x200.png" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+
+
+    </div>
+  </div>
+</header>
+
+<div class="intro-header ">
+  
+  <div class="header-overlay"></div>
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="page-heading">
+          <h1>
+            <span class="site-title">
+              <span class="red-word">Red</span>
+              <span class="ackee-word">Ackee</span>
+              <span class="software-word">Software</span>
+            </span>
+          </h1>
+          
+          
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+</div>
+
+
+
+
+<main class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+      
+
+      <h1 id="voice-feedback-gimmick-uiux-and-implementation-action-plan">Voice Feedback Gimmick: UI/UX and Implementation Action Plan</h1>
+
+<h2 id="overview">Overview</h2>
+
+<p>This document outlines the action plan for implementing a voice feedback feature on the site, based on the plan in <code class="language-plaintext highlighter-rouge">FUTURE.md</code> and the new UI/UX and behavioral directives provided.</p>
+
+<hr />
+
+<h2 id="1-uiux-design">1. UI/UX Design</h2>
+
+<h3 id="microphone-avatar">Microphone Avatar</h3>
+
+<ul>
+  <li><strong>Appearance:</strong>
+    <ul>
+      <li>Circular avatar, attached to the top of the footer.</li>
+      <li>Image: Microphone styled as a green ackee fruit.</li>
+      <li>On activation (recording): Image flips to show a microphone/notebook combination.</li>
+    </ul>
+  </li>
+  <li><strong>Positioning:</strong>
+    <ul>
+      <li>On small screens: Stays attached to the top of the footer.</li>
+      <li>On large screens: Floats mid-bottom of the browser window.</li>
+    </ul>
+  </li>
+  <li><strong>Hover State:</strong>
+    <ul>
+      <li>Border color changes.</li>
+      <li>Speaks an action prompt (text to be provided; will be loaded from <code class="language-plaintext highlighter-rouge">feedback_prompts/action_prompt.txt</code>).</li>
+    </ul>
+  </li>
+  <li><strong>Activation:</strong>
+    <ul>
+      <li>Press and hold for 1 second, or mouse click, starts recording.</li>
+      <li>Shows a short message requesting feedback (text to be provided; will be loaded from <code class="language-plaintext highlighter-rouge">feedback_prompts/request_prompt.txt</code>).</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="recording--feedback">Recording &amp; Feedback</h3>
+
+<ul>
+  <li><strong>Recording:</strong>
+    <ul>
+      <li>Max voice input: 1 minute.</li>
+      <li>Records IP address and date/time with each input.</li>
+      <li>Converts voice to English text note.</li>
+      <li>Stores note in a new <code class="language-plaintext highlighter-rouge">feedback</code> subfolder.</li>
+    </ul>
+  </li>
+  <li><strong>User Feedback Display:</strong>
+    <ul>
+      <li>Shows the note and transcribed text to the user as soon as available.</li>
+      <li>Interface floats in the center of the site above the microphone avatar.</li>
+      <li>Design encourages good behaviour using psychology guidelines (see below).</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="2-file-structure">2. File Structure</h2>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">feedback_prompts/action_prompt.txt</code> — Text for the action prompt (spoken on hover).</li>
+  <li><code class="language-plaintext highlighter-rouge">feedback_prompts/request_prompt.txt</code> — Text for the request prompt (shown/spoken on record start).</li>
+  <li><code class="language-plaintext highlighter-rouge">feedback/</code> — Folder to store user feedback notes (with IP and timestamp).</li>
+</ul>
+
+<hr />
+
+<h2 id="3-interface--psychology-guidelines">3. Interface &amp; Psychology Guidelines</h2>
+
+<ul>
+  <li><strong>Feedback Modal:</strong>
+    <ul>
+      <li>Centered, floating modal with soft edges and calming colors.</li>
+      <li>Shows the transcribed note and a positive, encouraging message.</li>
+      <li>Includes a reminder about privacy and respectful feedback.</li>
+      <li>Optionally, a simple emoji or badge for positive reinforcement.</li>
+    </ul>
+  </li>
+  <li><strong>Encouragement:</strong>
+    <ul>
+      <li>Use gratitude (“Thank you for your feedback!”) and positive language.</li>
+      <li>Remind users their input helps improve the site for everyone.</li>
+      <li>Display a short, friendly code of conduct or “be kind” reminder.</li>
+    </ul>
+  </li>
+  <li><strong>Transparency:</strong>
+    <ul>
+      <li>Clearly state that IP and timestamp are recorded for quality and safety.</li>
+      <li>Assure users their voice is only used for feedback and not shared.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="4-next-steps-action-only-no-code-yet">4. Next Steps (Action Only, No Code Yet)</h2>
+
+<ul>
+  <li>Prepare the microphone avatar images (green ackee fruit, and microphone/notebook combo).</li>
+  <li>Create the <code class="language-plaintext highlighter-rouge">feedback_prompts</code> subfolder and add placeholder text files for prompts.</li>
+  <li>Design the floating modal interface and feedback note display.</li>
+  <li>Plan the logic for recording, transcribing, and storing feedback as described.</li>
+  <li>Review and finalize psychology-based encouragement and privacy messaging.</li>
+</ul>
+
+<hr />
+
+<p><em>This document is an action plan only. No implementation code is included.</em></p>
+
+
+      
+
+      
+
+    </div>
+  </div>
+</main>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      
+<ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="mailto:ndilworth.work@gmail.com" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://github.com/redackee" title="GitHub">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">GitHub</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://twitter.com/redackee" title="X (Twitter)">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-x-twitter fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">X (Twitter)</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://linkedin.com/in/nkosidilworth" title="LinkedIn">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">LinkedIn</span>
+   </a>
+  </li></ul>
+
+
+      
+      <p class="copyright text-muted">
+      
+        Nkosi Dilworth
+            <!-- Voice Feedback Microphone Avatar -->
+            <div id="voice-feedback-avatar" class="voice-feedback-avatar" title="Send voice feedback">
+              <img src="/assets/img/avatar-redackee-200x200.png" alt="Microphone Avatar" id="mic-avatar-img">
+            </div>
+        &nbsp;&bull;&nbsp;
+      
+      2025
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="/">redackee.com</a>
+        </span>
+      
+
+      
+
+      
+
+      </p>
+      <p class="theme-by text-muted">
+    <script src="/assets/js/voice-feedback.js"></script>
+        Powered by
+        <a href="https://beautifuljekyll.com">Beautiful Jekyll</a>
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+
+
+
+
+</body>
+</html>

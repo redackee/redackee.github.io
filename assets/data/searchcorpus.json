@@ -1,0 +1,52 @@
+[ 
+ 
+ 
+{ 
+"title"    : "Red Ackee Software", 
+"desc"     : "Red Ackee Software", 
+"category" : "page", 
+"url"      : "/", 
+"date"     : "January 1, 1970" 
+}, 
+ 
+{ 
+"title"    : "Voice Feedback Gimmick: Implementation Breakdown", 
+"desc"     : "Voice Feedback Gimmick: Implementation Breakdown", 
+"category" : "page", 
+"url"      : "/FUTURE/feedback_gimmick_breakdown/", 
+"date"     : "January 1, 1970" 
+}, 
+ 
+{ 
+"title"    : "Voice Feedback Gimmick: Implementation Checklist", 
+"desc"     : "Voice Feedback Gimmick: Implementation Checklist", 
+"category" : "page", 
+"url"      : "/FUTURE/feedback_gimmick_checklist/", 
+"date"     : "January 1, 1970" 
+}, 
+ 
+{ 
+"title"    : "Voice Feedback Gimmick: Implementation Documentation", 
+"desc"     : "Voice Feedback Gimmick: Implementation Documentation", 
+"category" : "page", 
+"url"      : "/FUTURE/feedback_gimmick_implementation/", 
+"date"     : "January 1, 1970" 
+}, 
+ 
+{ 
+"title"    : "Voice Feedback Gimmick: UI/UX and Implementation Action Plan", 
+"desc"     : "Voice Feedback Gimmick: UI/UX and Implementation Action Plan", 
+"category" : "page", 
+"url"      : "/FUTURE/feedback_gimmick_plan/", 
+"date"     : "January 1, 1970" 
+}, 
+ 
+{ 
+"title"    : "Voice Feedback Gimmick: UI/UX and Implementation Action Plan", 
+"desc"     : "Voice Feedback Gimmick: UI/UX and Implementation Action Plan", 
+"category" : "page", 
+"url"      : "/FUTURE/", 
+"date"     : "January 1, 1970" 
+} 
+ 
+]

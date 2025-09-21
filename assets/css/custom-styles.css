@@ -1,0 +1,166 @@
+/* Custom styles for Red Ackee Software branding */
+
+.site-title .red-word {
+  color: #d32f2f;
+  font-weight: bold;
+}
+.site-title .ackee-word {
+  color: #111;
+  font-weight: bold;
+}
+.site-title .software-word {
+  color: #FFD700;
+  font-weight: bold;
+  -webkit-text-stroke: 1px #111;
+  text-stroke: 1px #111; /* For future compatibility */
+}
+
+/* Navbar site title */
+.navbar-brand {
+  color: #d32f2f !important; /* Red shade */
+  font-weight: bold;
+  font-family: 'Montserrat', 'Arial', sans-serif;
+  display: none !important;
+}
+.navbar-brand .red-word {
+  color: #d32f2f;
+  font-weight: bold;
+}
+.navbar-brand .ackee-word {
+  color: #111;
+  font-weight: bold;
+}
+.navbar-brand .software-word {
+  color: #FFD700;
+  font-weight: bold;
+  -webkit-text-stroke: 1px #111;
+  text-stroke: 1px #111; /* For future compatibility */
+}
+
+/* Main page title (h1) */
+[...existing code...]
+[...existing code...]
+/* Voice Feedback Microphone Avatar Styles */
+.voice-feedback-avatar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px auto 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #e6f7ee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 2px solid #2ecc40;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.voice-feedback-avatar:hover {
+  border-color: #FFD700;
+  box-shadow: 0 4px 16px rgba(44,204,64,0.15);
+}
+#mic-avatar-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+.voice-feedback-avatar.active #mic-avatar-img {
+  transform: rotateY(180deg);
+}
+/* Voice Feedback Microphone Avatar Styles */
+.voice-feedback-avatar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px auto 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #e6f7ee;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 2px solid #2ecc40;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.voice-feedback-avatar:hover {
+  border-color: #FFD700;
+  box-shadow: 0 4px 16px rgba(44,204,64,0.15);
+}
+#mic-avatar-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+.voice-feedback-avatar.active #mic-avatar-img {
+  transform: rotateY(180deg);
+}
+h1, .page-title {
+  color: #d32f2f;
+}
+
+/* Make .page-heading look like .page-title */
+.page-heading {
+  color: #d32f2f;
+  font-size: 2.5em;
+  font-weight: bold;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+.page-heading .red-word {
+  color: #d32f2f;
+  font-weight: bold;
+}
+.page-heading .ackee-word {
+  color: #111;
+  font-weight: bold;
+}
+.page-heading .software-word {
+  color: #FFD700;
+  font-weight: bold;
+  -webkit-text-stroke: 1px #111;
+  text-stroke: 1px #111; /* For future compatibility */
+}
+
+/* Footer site title, if present */
+.footer .site-title {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+/* Hide default page title if custom one is present */
+.page-title + .page-title, h1 + .page-title, h1.page-title + h1.page-title {
+  display: none;
+}
+
+/* Hide default page header if custom page title is present */
+.page-title + .page-heading, h1 + .page-heading, h1.page-title + h1.page-heading {
+  display: none;
+}
+
+/* Header overlay for dimming/fading banner image */
+.header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.35); /* semi-transparent white */
+  z-index: 1;
+  pointer-events: none;
+}
+.intro-header {
+  position: relative;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+.intro-header .container-md, .intro-header .row, .intro-header .col-xl-8, .intro-header .col-lg-10 {
+  position: relative;
+  z-index: 2;
+}
+body {
+  padding-top: 0 !important;
+}
