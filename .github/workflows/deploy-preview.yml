@@ -37,4 +37,4 @@ jobs:
           publish_dir: ./_site
           external_repository: redackee/preview-website
           publish_branch: gh-pages
-          github_token: ${{ secrets.PREVIEW_DEPLOY_TOKEN }}
+          personal_token: ${{ secrets.PREVIEW_DEPLOY_TOKEN }}
