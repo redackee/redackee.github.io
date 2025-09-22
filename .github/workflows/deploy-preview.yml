@@ -28,6 +28,9 @@ jobs:
       - name: Install dependencies
         run: bundle install --jobs 4 --retry 3
 
+      - name: Clean _site directory
+        run: rm -rf ./_site
+
       - name: Build Jekyll site
         run: bundle exec jekyll build -d ./_site
 
