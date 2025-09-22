@@ -1,1 +1,1 @@
-(Action prompt text goes here. To be provided later.)
+    - Welcome to Red Ackee software. Please tell us your idea or leave feedback. Simply speak and I will listen and take notes. Click the microphone button at any time. 

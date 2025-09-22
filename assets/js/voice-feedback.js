@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Play action prompt on hover
   avatar.addEventListener('mouseenter', function() {
-    fetch('/FUTURE/feedback_prompts/action_prompt.txt')
+    fetch('/feedback_prompts/action_prompt.txt')
       .then(r => r.text())
       .then(text => speakPrompt(text));
     avatar.classList.add('hover');
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (recording) return;
     recording = true;
     avatar.classList.add('active');
-    fetch('/FUTURE/feedback_prompts/request_prompt.txt')
+    fetch('/feedback_prompts/request_prompt.txt')
       .then(r => r.text())
       .then(text => speakPrompt(text));
     // Integrate MediaRecorder API
