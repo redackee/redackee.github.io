@@ -303,6 +303,7 @@ exclude:
   - vendor/
   - SETUP_SUMMARY.md
   - FUTURE.md
+  - FUTURE/
 
 plugins:
   - jekyll-paginate
