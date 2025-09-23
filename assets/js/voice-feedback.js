@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (recording) return;
     recording = true;
     avatar.classList.add('active');
-    fetch('/feedback_prompts/request_prompt.txt')
+    fetch('/FUTURE/feedback_prompts/request_prompt.txt')
       .then(r => r.text())
       .then(text => speakPrompt(text));
     // Integrate MediaRecorder API
@@ -135,6 +135,5 @@ document.addEventListener('DOMContentLoaded', function() {
       showFeedbackModal('Transcription failed.');
       console.error(err);
     }
-  }
   }
 });
