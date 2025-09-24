@@ -32,7 +32,7 @@ jobs:
         run: rm -rf ./_site
 
       - name: Build Jekyll site
-        run: bundle exec jekyll build -d ./_site
+        run: bundle exec jekyll build -d ./_site --baseurl "/preview-website"
 
       - name: Deploy to preview repository
         uses: peaceiris/actions-gh-pages@v4
