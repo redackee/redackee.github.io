@@ -1,6 +1,9 @@
 // Voice Feedback Gimmick JS
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Respect any site baseurl set by the server build
+  const siteBaseurl = window.siteBaseurl || (window.location && window.location.pathname && window.location.pathname.startsWith('/') ? window.location.pathname.replace(/\/$/, '') : '');
+
   // Vosklet WASM integration scaffolding
   let voskletReady = false;
   let voskletRecognizer = null;
@@ -8,10 +11,15 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load Vosklet model (instructions: place Vosklet assets in assets/wasm/)
   async function loadVosklet() {
     if (window.Vosklet) {
-      const modelPath = '/assets/wasm/vosk-model-small-en-us-0.15';
-      voskletRecognizer = new window.Vosklet.Recognizer({modelPath});
-      await voskletRecognizer.init();
-      voskletReady = true;
+      const modelPath = `${siteBaseurl}/assets/wasm/vosk-model-small-en-us-0.15`;
+      try {
+        voskletRecognizer = new window.Vosklet.Recognizer({modelPath});
+        await voskletRecognizer.init();
+        voskletReady = true;
+      } catch (e) {
+        console.error('Vosklet initialization failed:', e);
+        voskletReady = false;
+      }
     } else {
       console.warn('Vosklet WASM not loaded. Please include Vosklet JS and model files.');
     }
@@ -46,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Play action prompt on hover
   avatar.addEventListener('mouseenter', function() {
-    fetch('/feedback_prompts/action_prompt.txt')
+    fetch(`${siteBaseurl}/feedback_prompts/action_prompt.txt`)
       .then(r => r.text())
       .then(text => speakPrompt(text));
     avatar.classList.add('hover');
@@ -79,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (recording) return;
     recording = true;
     avatar.classList.add('active');
-    fetch('/FUTURE/feedback_prompts/request_prompt.txt')
+    fetch(`${siteBaseurl}/feedback_prompts/request_prompt.txt`)
       .then(r => r.text())
       .then(text => speakPrompt(text));
     // Integrate MediaRecorder API
