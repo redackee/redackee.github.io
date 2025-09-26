@@ -127,13 +127,15 @@
         }
       })();
     </script>
-    <script src="{{ site.baseurl }}/assets/wasm/Vosklet.js"></script>
+    <script src="{{ site.baseurl }}/assets/wasm/load-vosket.js"></script>
     <script>
       // Expose the runtime baseurl to client-side scripts
       window.siteBaseurl = "{{ site.baseurl | default: '' }}";
 
       // Initialize Vosklet and expose it as window.Vosklet for the feedback script.
       (async function initVosklet(){
+        // Give the loader a small grace period to load a build
+        await new Promise(r => setTimeout(r, 200));
         if (typeof loadVosklet !== 'function') {
           console.warn('Vosklet loader not found on the page.');
           return;
@@ -143,21 +145,12 @@
           const module = await loadVosklet();
           window.Vosklet = module;
           console.info('Vosklet initialized successfully.');
-
-          // Quick check that the model directory exists (helps catch 404s early)
-          const modelCheckUrl = (window.siteBaseurl || '') + '/assets/wasm/vosk-model-small-en-us-0.15/README';
-          try {
-            const resp = await fetch(modelCheckUrl, { method: 'GET', cache: 'no-store' });
-            if (!resp.ok) console.warn(`Vosk model check returned ${resp.status} for ${modelCheckUrl}. Model files may be missing or inaccessible.`);
-            else console.info('Vosk model directory found.');
-          } catch (err) {
-            console.warn('Vosk model check failed (network error):', err);
-          }
         } catch (e) {
           console.error('Failed to initialize Vosklet:', e);
         }
       })();
     </script>
+    <script src="{{ site.baseurl }}/assets/js/voice-feedback.js"></script>
         Powered by
         <a href="https://beautifuljekyll.com">Beautiful Jekyll</a>
       </p>{% endunless %}
