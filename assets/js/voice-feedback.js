@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Vosklet WASM integration scaffolding
   let voskletReady = false;
   let voskletRecognizer = null;
+  // Web Speech API (live transcription) fallback
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let speechRecognition = null;
 
   // Load Vosklet model (instructions: place Vosklet assets in assets/wasm/)
   async function loadVosklet() {
@@ -91,6 +94,34 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(r => r.text())
       .then(text => speakPrompt(text));
     // Integrate MediaRecorder API
+    // If Vosklet isn't available but SpeechRecognition is, prefer live recognition (no blob needed)
+    if (!voskletReady && SpeechRecognition) {
+      try {
+        speechRecognition = new SpeechRecognition();
+        speechRecognition.lang = 'en-US';
+        speechRecognition.interimResults = false;
+        speechRecognition.maxAlternatives = 1;
+        speechRecognition.onresult = (ev) => {
+          const txt = ev.results && ev.results[0] && ev.results[0][0] ? ev.results[0][0].transcript : '';
+          showFeedbackModal(txt ? `Transcribed: ${txt}` : 'No speech detected.');
+        };
+        speechRecognition.onerror = (err) => {
+          console.error('SpeechRecognition error', err);
+          showFeedbackModal('Transcription failed.');
+        };
+        speechRecognition.onend = () => {
+          recording = false;
+          avatar.classList.remove('active');
+        };
+        speechRecognition.start();
+        // Stop recognition automatically after 60s
+        setTimeout(() => { if (speechRecognition) { speechRecognition.stop(); } }, 60000);
+        return;
+      } catch (e) {
+        console.warn('SpeechRecognition failed to start', e);
+        // fall through to MediaRecorder
+      }
+    }
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
         mediaRecorder = new MediaRecorder(stream);
@@ -122,6 +153,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!recording) return;
     recording = false;
     avatar.classList.remove('active');
+    if (speechRecognition) {
+      try { speechRecognition.stop(); } catch(e){}
+      speechRecognition = null;
+    }
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
       mediaRecorder.stop();
     }
