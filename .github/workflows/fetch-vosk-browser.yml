@@ -1,0 +1,56 @@
+name: Fetch Vosk Browser Build
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Install git (if missing)
+        run: |
+          sudo apt-get update && sudo apt-get install -y git || true
+
+      - name: Clone redackee/vosk-browser
+        run: |
+          rm -rf /tmp/vosk-browser
+          git clone --depth 1 https://github.com/redackee/vosk-browser.git /tmp/vosk-browser || true
+
+      - name: Copy browser build assets if present
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -e
+          mkdir -p assets/wasm
+          COPIED=0
+          # Prefer dist/ layout, fallback to repo root
+          for f in \
+            /tmp/vosk-browser/dist/Vosklet.browser.js \
+            /tmp/vosk-browser/Vosklet.browser.js; do
+            if [ -f "$f" ]; then cp "$f" assets/wasm/ && COPIED=$((COPIED+1)); fi
+          done
+          for f in \
+            /tmp/vosk-browser/dist/Vosklet.wasm \
+            /tmp/vosk-browser/Vosklet.wasm; do
+            if [ -f "$f" ]; then cp "$f" assets/wasm/ && COPIED=$((COPIED+1)); fi
+          done
+          # Copy model dir if present
+          if [ -d /tmp/vosk-browser/model ]; then cp -R /tmp/vosk-browser/model assets/wasm/ && COPIED=$((COPIED+1)); fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/wasm || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: fetch Vosk browser build"
+            git push origin HEAD:${BRANCH}
+          fi
