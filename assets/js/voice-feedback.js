@@ -27,31 +27,44 @@ document.addEventListener('DOMContentLoaded', function() {
   // Respect any site baseurl set by the server build
   const siteBaseurl = window.siteBaseurl || (window.location && window.location.pathname && window.location.pathname.startsWith('/') ? window.location.pathname.replace(/\/$/, '') : '');
 
-  // Vosklet WASM integration scaffolding
-  let voskletReady = false;
-  let voskletRecognizer = null;
+  // vosk-browser WASM integration
+  let voskReady = false;
+  let voskModel = null;
+  let voskRecognizer = null;
   // Web Speech API (live transcription) fallback
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   let speechRecognition = null;
 
-  // Load Vosklet model (instructions: place Vosklet assets in assets/wasm/)
-  async function loadVosklet() {
-    if (window.Vosklet) {
-      const modelPath = `${siteBaseurl}/assets/wasm/vosk-model-small-en-us-0.15`;
-      try {
-        voskletRecognizer = new window.Vosklet.Recognizer({modelPath});
-        await voskletRecognizer.init();
-        voskletReady = true;
-      } catch (e) {
-        console.error('Vosklet initialization failed:', e);
-        voskletReady = false;
-      }
-    } else {
-      console.warn('Vosklet WASM not loaded. Please include Vosklet JS and model files.');
+  // Load vosk-browser model (requires vosk-browser library from CDN or local)
+  async function loadVosk() {
+    if (!window.Vosk || !window.Vosk.createModel) {
+      console.warn('[vosk-browser] Library not loaded. Will use Web Speech API fallback.');
+      return;
+    }
+    
+    const modelUrl = `${siteBaseurl}/assets/wasm/vosk-model-small-en-us-0.15.tar.gz`;
+    try {
+      console.log('[vosk-browser] Loading model from:', modelUrl);
+      voskModel = await window.Vosk.createModel(modelUrl);
+      voskRecognizer = new voskModel.KaldiRecognizer(16000);
+      
+      // Set up event listeners for recognition results
+      voskRecognizer.on("result", (message) => {
+        console.log('[vosk-browser] Result:', message.result);
+      });
+      voskRecognizer.on("partialresult", (message) => {
+        console.log('[vosk-browser] Partial result:', message.result);
+      });
+      
+      voskReady = true;
+      console.log('[vosk-browser] Model loaded and ready');
+    } catch (e) {
+      console.error('[vosk-browser] Initialization failed:', e);
+      voskReady = false;
     }
   }
-  // Attempt to load Vosklet on page load
-  loadVosklet();
+  // Attempt to load vosk-browser on page load
+  loadVosk();
   const avatar = document.getElementById('voice-feedback-avatar');
   const micImg = document.getElementById('mic-avatar-img');
   let recording = false;
@@ -117,8 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(r => r.text())
       .then(text => speakPrompt(text));
     // Integrate MediaRecorder API
-    // If Vosklet isn't available but SpeechRecognition is, prefer live recognition (no blob needed)
-    if (!voskletReady && SpeechRecognition) {
+    // If vosk-browser isn't available but SpeechRecognition is, prefer live recognition (no blob needed)
+    if (!voskReady && SpeechRecognition) {
       try {
         speechRecognition = new SpeechRecognition();
         speechRecognition.lang = 'en-US';
@@ -154,8 +167,8 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         mediaRecorder.onstop = () => {
           const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-          if (voskletReady && voskletRecognizer) {
-            transcribeAudioVosklet(audioBlob);
+          if (voskReady && voskRecognizer) {
+            transcribeAudioVosk(audioBlob);
           } else {
             showFeedbackModal('Your voice note has been recorded. Transcription coming soon.');
           }
@@ -191,15 +204,51 @@ document.addEventListener('DOMContentLoaded', function() {
     feedbackModal.querySelector('#transcribed-text').textContent = text;
   }
 
-  // Transcribe audio using Vosklet
-  async function transcribeAudioVosklet(audioBlob) {
+  // Transcribe audio using vosk-browser
+  async function transcribeAudioVosk(audioBlob) {
     try {
+      // Convert audio blob to AudioBuffer
       const arrayBuffer = await audioBlob.arrayBuffer();
-      const result = await voskletRecognizer.recognize(arrayBuffer);
-      showFeedbackModal(result.text ? `Transcribed: ${result.text}` : 'No speech detected.');
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      
+      console.log('[vosk-browser] Processing audio buffer, sample rate:', audioBuffer.sampleRate);
+      
+      // Create a recognizer for one-shot transcription with the appropriate sample rate
+      const recognizer = new voskModel.KaldiRecognizer(audioBuffer.sampleRate);
+      
+      // Set up result collection
+      let finalText = '';
+      let resultReceived = false;
+      
+      recognizer.on("result", (message) => {
+        console.log('[vosk-browser] Got final result:', message.result);
+        if (message.result && message.result.text) {
+          finalText = message.result.text;
+        }
+        resultReceived = true;
+      });
+      
+      recognizer.on("partialresult", (message) => {
+        console.log('[vosk-browser] Partial:', message.result);
+      });
+      
+      // Feed the audio buffer to the recognizer
+      recognizer.acceptWaveform(audioBuffer);
+      
+      // Retrieve the final result
+      recognizer.retrieveFinalResult();
+      
+      // Wait a moment for the result event to fire
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Clean up
+      recognizer.remove();
+      
+      showFeedbackModal(finalText ? `Transcribed: ${finalText}` : 'No speech detected.');
     } catch (err) {
       showFeedbackModal('Transcription failed.');
-      console.error(err);
+      console.error('[vosk-browser] Transcription error:', err);
     }
   }
 });
