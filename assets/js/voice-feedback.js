@@ -1,6 +1,29 @@
 // Voice Feedback Gimmick JS
 
+// Version for quick test/diagnostic
+const VF_VERSION = '2025-10-05-test';
+
 document.addEventListener('DOMContentLoaded', function() {
+  console.log(`[voice-feedback] loaded version ${VF_VERSION}`);
+  // Create a small visible version badge for quick UI verification
+  try {
+    const verBadge = document.createElement('div');
+    verBadge.id = 'voice-feedback-version';
+    verBadge.textContent = `VF ${VF_VERSION}`;
+    verBadge.style.position = 'fixed';
+    verBadge.style.right = '12px';
+    verBadge.style.bottom = '12px';
+    verBadge.style.padding = '6px 8px';
+    verBadge.style.background = 'rgba(0,0,0,0.6)';
+    verBadge.style.color = '#fff';
+    verBadge.style.fontSize = '12px';
+    verBadge.style.borderRadius = '8px';
+    verBadge.style.zIndex = '10000';
+    verBadge.style.pointerEvents = 'none';
+    document.body.appendChild(verBadge);
+  } catch (e) {
+    // If DOM not available (e.g. non-browser runtime), ignore
+  }
   // Respect any site baseurl set by the server build
   const siteBaseurl = window.siteBaseurl || (window.location && window.location.pathname && window.location.pathname.startsWith('/') ? window.location.pathname.replace(/\/$/, '') : '');
 
