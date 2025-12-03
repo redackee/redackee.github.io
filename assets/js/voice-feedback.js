@@ -72,6 +72,40 @@ document.addEventListener('DOMContentLoaded', function() {
   let mediaRecorder;
   let audioChunks = [];
 
+  // Add ARIA attributes for accessibility
+  if (avatar) {
+    avatar.setAttribute('role', 'button');
+    avatar.setAttribute('aria-label', 'Activate voice feedback. Press Enter or Space to record your feedback.');
+    avatar.setAttribute('tabindex', '0');
+    avatar.setAttribute('aria-pressed', 'false');
+    
+    // Create live region for status announcements
+    const statusRegion = document.createElement('div');
+    statusRegion.id = 'voice-feedback-status';
+    statusRegion.className = 'sr-only';
+    statusRegion.setAttribute('role', 'status');
+    statusRegion.setAttribute('aria-live', 'polite');
+    statusRegion.setAttribute('aria-atomic', 'true');
+    statusRegion.style.position = 'absolute';
+    statusRegion.style.width = '1px';
+    statusRegion.style.height = '1px';
+    statusRegion.style.padding = '0';
+    statusRegion.style.margin = '-1px';
+    statusRegion.style.overflow = 'hidden';
+    statusRegion.style.clip = 'rect(0, 0, 0, 0)';
+    statusRegion.style.whiteSpace = 'nowrap';
+    statusRegion.style.border = '0';
+    avatar.parentNode.insertBefore(statusRegion, avatar.nextSibling);
+  }
+
+  // Helper function to update status region
+  function updateStatus(message) {
+    const statusRegion = document.getElementById('voice-feedback-status');
+    if (statusRegion) {
+      statusRegion.textContent = message;
+    }
+  }
+
   // Create feedback modal
   const feedbackModal = document.createElement('div');
   feedbackModal.id = 'voice-feedback-modal';
@@ -93,27 +127,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Play action prompt on hover
   avatar.addEventListener('mouseenter', function() {
-    fetch(`${siteBaseurl}/feedback_prompts/action_prompt.txt`)
-      .then(r => r.text())
-      .then(text => speakPrompt(text));
-    avatar.classList.add('hover');
+    if (!recording) {
+      updateStatus('Hover detected. Click to start recording.');
+      fetch(`${siteBaseurl}/feedback_prompts/action_prompt.txt`)
+        .then(r => r.text())
+        .then(text => speakPrompt(text))
+        .catch(err => console.error('[voice-feedback] Failed to load action prompt:', err));
+      avatar.classList.add('hover');
+    }
   });
   avatar.addEventListener('mouseleave', function() {
     avatar.classList.remove('hover');
   });
 
+  // Keyboard activation (Enter or Space)
+  avatar.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleRecording();
+    }
+  });
+
+  // Visual focus indicator
+  avatar.addEventListener('focus', function() {
+    avatar.style.outline = '3px solid #0066cc';
+    avatar.style.outlineOffset = '4px';
+  });
+  
+  avatar.addEventListener('blur', function() {
+    avatar.style.outline = 'none';
+  });
+
   // Activate recording on click or long press
   avatar.addEventListener('mousedown', function() {
-    recordTimeout = setTimeout(() => startRecording(), 1000);
+    recordTimeout = setTimeout(() => toggleRecording(), 1000);
   });
   avatar.addEventListener('mouseup', function() {
     clearTimeout(recordTimeout);
-    if (!recording) return;
-    stopRecording();
   });
-  avatar.addEventListener('click', function() {
-    startRecording();
+  avatar.addEventListener('click', function(e) {
+    e.preventDefault();
+    toggleRecording();
   });
+
+  function toggleRecording() {
+    if (!recording) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  }
 
   function speakPrompt(text) {
     if ('speechSynthesis' in window) {
@@ -126,9 +189,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if (recording) return;
     recording = true;
     avatar.classList.add('active');
+    avatar.setAttribute('aria-pressed', 'true');
+    avatar.setAttribute('aria-label', 'Recording in progress. Press Enter or Space to stop.');
+    updateStatus('Recording started. Speak now. Press the button again to stop.');
+    
     fetch(`${siteBaseurl}/feedback_prompts/request_prompt.txt`)
       .then(r => r.text())
-      .then(text => speakPrompt(text));
+      .then(text => speakPrompt(text))
+      .catch(err => console.error('[voice-feedback] Failed to load request prompt:', err));
     // Integrate MediaRecorder API
     // If vosk-browser isn't available but SpeechRecognition is, prefer live recognition (no blob needed)
     if (!voskReady && SpeechRecognition) {
@@ -189,6 +257,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!recording) return;
     recording = false;
     avatar.classList.remove('active');
+    avatar.setAttribute('aria-pressed', 'false');
+    avatar.setAttribute('aria-label', 'Activate voice feedback. Press Enter or Space to record your feedback.');
+    updateStatus('Recording stopped. Processing your feedback...');
+    
     if (speechRecognition) {
       try { speechRecognition.stop(); } catch(e){}
       speechRecognition = null;
@@ -200,8 +272,59 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function showFeedbackModal(text) {
+    // Update modal with ARIA attributes
+    feedbackModal.setAttribute('role', 'dialog');
+    feedbackModal.setAttribute('aria-modal', 'true');
+    feedbackModal.setAttribute('aria-labelledby', 'feedback-modal-title');
+    feedbackModal.setAttribute('aria-describedby', 'transcribed-text');
+    
+    const h3 = feedbackModal.querySelector('h3');
+    if (h3) h3.id = 'feedback-modal-title';
+    
     feedbackModal.style.display = 'block';
     feedbackModal.querySelector('#transcribed-text').textContent = text;
+    
+    // Store previous focus
+    const previousFocus = document.activeElement;
+    
+    // Focus the close button
+    const closeBtn = feedbackModal.querySelector('#close-modal');
+    if (closeBtn) {
+      closeBtn.setAttribute('aria-label', 'Close feedback dialog');
+      setTimeout(() => closeBtn.focus(), 100);
+    }
+    
+    // Enhanced close function with focus restoration
+    const closeModal = function() {
+      feedbackModal.style.display = 'none';
+      updateStatus('Feedback dialog closed.');
+      // Restore focus to avatar
+      if (previousFocus && previousFocus.focus) {
+        previousFocus.focus();
+      }
+    };
+    
+    // Update close button handler
+    closeBtn.onclick = closeModal;
+    
+    // Close on Escape key
+    const escapeHandler = function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+        document.removeEventListener('keydown', escapeHandler);
+      }
+    };
+    document.addEventListener('keydown', escapeHandler);
+    
+    // Close on backdrop click
+    feedbackModal.onclick = function(e) {
+      if (e.target === feedbackModal) {
+        closeModal();
+        document.removeEventListener('keydown', escapeHandler);
+      }
+    };
+    
+    updateStatus('Feedback received. Dialog opened with transcription results.');
   }
 
   // Transcribe audio using vosk-browser
