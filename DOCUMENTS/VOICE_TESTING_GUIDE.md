@@ -151,6 +151,12 @@ Expected result:
 - ✅ Recording indicator appears (check browser UI)
 - ✅ After stopping, modal appears with transcribed text plus privacy/conduct notes
 
+### Real-World Accuracy Note:
+
+- Wind, room echo, and background noise can reduce transcript completeness.
+- Minor dropped words during outdoor or noisy testing do not necessarily indicate a controller bug.
+- Re-test indoors or closer to the microphone before treating missing words as a code defect.
+
 ### Console Messages:
 
 ```javascript
@@ -193,6 +199,11 @@ We process your speech in the browser for this site experience.
 - ✅ Audio blob sent to vosk-browser
 - ✅ vosk-browser transcribes offline
 - ✅ Modal shows result
+
+### Accuracy Note:
+
+- Offline transcription quality also depends on mic quality and ambient noise.
+- Compare quiet-room results before changing models or recognition logic.
 
 ### Console Messages:
 

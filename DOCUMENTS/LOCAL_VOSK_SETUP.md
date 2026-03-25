@@ -1,170 +1,82 @@
 # Local vosk-browser Setup - Summary
 
-## ✅ Completed: Local Installation
+## Overview
 
-Successfully configured vosk-browser to load from **local files** instead of CDN.
+The site serves `vosk-browser` and the English model archive from local assets so the voice feedback feature can prepare an offline transcription path without relying on a CDN.
 
----
+This document describes the local asset setup only. For current runtime behavior and smoke-test notes, see `DOCUMENTS/VOSK_BROWSER_MIGRATION.md` and `DOCUMENTS/VOICE_TESTING_GUIDE.md`.
 
-## Files Added
+## Local Assets In Use
 
-### `/assets/wasm/vosk.js`
+### `assets/wasm/vosk.js`
 
-- **Size:** 5.5 MB
-- **Source:** Downloaded from npm package `vosk-browser@0.0.8`
-- **URL:** https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js
-- **Purpose:** Complete vosk-browser library including Web Worker code
+- Source: local copy committed to the repo
+- Purpose: browser Vosk runtime and worker support
 
-### `/assets/wasm/vosk-model-small-en-us-0.15.tar.gz`
+### `assets/wasm/vosk-model-small-en-us-0.15.tar.gz`
 
-- **Size:** 39 MB compressed (68 MB uncompressed)
-- **Source:** Created from existing model directory
-- **Command:** `tar czf vosk-model-small-en-us-0.15.tar.gz vosk-model-small-en-us-0.15/`
-- **Purpose:** Vosk speech recognition model for English (US)
+- Source: archive created from the checked-in model directory
+- Purpose: offline English transcription model
 
----
+## How The Site Loads Them
 
-## Configuration Changes
-
-### `_includes/footer.html`
-
-**Changed from CDN:**
+The footer loads the local files directly:
 
 ```html
-<script
-  type="application/javascript"
-  src="https://cdn.jsdelivr.net/npm/vosk-browser@0.0.8/dist/vosk.js"
-></script>
+<script src="{{ site.baseurl }}/assets/js/voice-feedback-core.js"></script>
+<script type="application/javascript" src="{{ site.baseurl }}/assets/wasm/vosk.js"></script>
+<script src="{{ site.baseurl }}/assets/js/voice-feedback.js"></script>
 ```
 
-**To local file:**
+The model archive is requested by `voice-feedback.js` through the local base URL, not from a CDN.
 
-```html
-<script
-  type="application/javascript"
-  src="{{ site.baseurl }}/assets/wasm/vosk.js"
-></script>
-```
+## Benefits Of Local Serving
 
----
+- No external CDN dependency
+- Same-origin asset loading
+- Better offline/privacy posture
+- Exact repo-controlled asset versions
 
-## Benefits of Local Installation
+## Current File Layout
 
-✅ **No external dependencies** - Works offline, no CDN required  
-✅ **Privacy** - No requests to external servers  
-✅ **Speed** - No CDN latency  
-✅ **Reliability** - Not affected by CDN outages  
-✅ **Version control** - Exact version is tracked in repo  
-✅ **No CORS issues** - Everything served from same origin
-
----
-
-## File Structure
-
-```
+```text
 assets/wasm/
-├── vosk.js                                  (5.5 MB) ✅ NEW
-├── vosk-model-small-en-us-0.15.tar.gz      (39 MB)  ✅ NEW
-├── vosk-model-small-en-us-0.15/            (68 MB)  ✅ Existing
-│   ├── README
-│   ├── am/
-│   ├── conf/
-│   ├── graph/
-│   └── ivector/
-├── Vosklet.js                              (25 KB)  ⚠️ Old (can remove)
-├── Vosklet.wasm                            (2.2 MB) ⚠️ Old (can remove)
-├── Vosklet.browser.js                      (1.5 KB) ⚠️ Old (can remove)
-├── load-vosket.js                          (1.5 KB) ⚠️ Old (can remove)
-└── README-browser.md                                ⚠️ Old (can remove)
+├── vosk.js
+├── vosk-model-small-en-us-0.15.tar.gz
+├── vosk-model-small-en-us-0.15/
+├── Vosklet.js
+├── Vosklet.browser.js
+├── load-vosket.js
+└── README-browser.md
 ```
 
----
+Some Vosklet-era files are still present in the repo, but they are not part of the active runtime path.
+
+## Runtime Notes
+
+- The first model load can take noticeably longer than later visits.
+- Browser caching and IndexedDB can reduce repeated setup cost.
+- The site prefers browser speech recognition when available and falls back to local Vosk when needed.
 
 ## Verification
 
-### Server is serving the file:
+Useful checks:
 
-```bash
-ls -lh /Users/ndilworth/Workspace/redackee.github.io/_site/assets/wasm/vosk.js
-# Output: -rw-r--r--@ 1 ndilworth staff 5.5M Oct 8 17:33 vosk.js ✅
-```
+- Open the local site and wait for the voice widget to move from `loading` to `ready`.
+- Confirm `window.Vosk` exists in a browser console.
+- Confirm the page can reach `assets/wasm/vosk.js` and the model archive from the local site URL.
 
-### Script tag in HTML:
+## Known Constraints
 
-```bash
-grep 'assets/wasm/vosk.js' _site/index.html
-# Output: assets/wasm/vosk.js ✅
-```
+- VS Code's integrated browser is suitable for UI inspection but denies microphone permission.
+- A full happy-path recording test must be done in a normal browser.
 
-### Site URL:
+## Follow-up Options
 
-```
-http://127.0.0.1:4000/redackee.github.io/assets/wasm/vosk.js
-```
+- Remove unused Vosklet-era assets after confirming nothing depends on them.
+- Evaluate whether a newer Vosk model is worth the download and accuracy tradeoff.
 
 ---
 
-## How vosk-browser Works (Local Setup)
-
-1. **Page loads** → Browser downloads `vosk.js` (5.5 MB) from local server
-2. **vosk.js initializes** → Creates internal Web Worker
-3. **Model loads** → Worker downloads and extracts `vosk-model-small-en-us-0.15.tar.gz` (39 MB)
-4. **Model cached** → Stored in browser IndexedDB for future use
-5. **Ready to use** → Voice recognition available offline
-
-**First load:** ~10-15 seconds (downloads model)  
-**Subsequent loads:** Instant (model cached in IndexedDB)
-
----
-
-## Testing
-
-### Browser Console Commands:
-
-```javascript
-// Check if vosk-browser loaded
-console.log("Vosk loaded:", typeof window.Vosk !== "undefined");
-
-// Check version badge
-console.log(
-  "Version badge:",
-  document.getElementById("voice-feedback-version")
-);
-
-// Test model loading
-console.log("[vosk-browser] Check console for loading messages");
-```
-
-### Expected Console Output:
-
-```
-[voice-feedback] loaded version 2025-10-05-test
-[vosk-browser] Loading model from: /redackee.github.io/assets/wasm/vosk-model-small-en-us-0.15.tar.gz
-[vosk-browser] Model loaded and ready
-```
-
----
-
-## Next Steps (Optional)
-
-1. ✅ **Done:** Local vosk.js installation
-2. ✅ **Done:** Model tar.gz created
-3. ⚠️ **Optional:** Remove old Vosklet files
-4. ⚠️ **Optional:** Add loading indicator while model downloads
-5. ⚠️ **Optional:** Compress vosk.js with gzip on server (reduce transfer size)
-
----
-
-## Notes
-
-- **No separate worker/wasm files needed** - vosk.js is self-contained
-- **Model persists** - After first download, model stays in IndexedDB
-- **Fallback available** - Web Speech API works if vosk-browser fails
-- **Large files** - Total ~45 MB (vosk.js 5.5 MB + model 39 MB)
-- **Git LFS recommended** - Consider using Git LFS for large binary files
-
----
-
-**Setup completed:** October 8, 2025  
-**vosk-browser version:** 0.0.8  
-**Installation:** Local (no CDN)
+**Setup summary refreshed:** March 25, 2026  
+**Installation mode:** Local assets only

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the action plan for implementing a voice feedback feature on the site, based on the plan in `FUTURE.md` and the new UI/UX and behavioral directives provided.
+This document summarizes the intended direction for the voice feedback feature while keeping the current static-site limitation explicit.
 
 ---
 
@@ -28,9 +28,9 @@ This document outlines the action plan for implementing a voice feedback feature
 
 - **Recording:**
   - Max voice input: 1 minute.
-  - Records IP address and date/time with each input.
-  - Converts voice to English text note.
-  - Stores note in a new `feedback` subfolder.
+  - Converts voice to English text in the browser.
+  - Shows transcript feedback immediately in the modal.
+  - Does not currently store feedback, IP addresses, or timestamps.
 - **User Feedback Display:**
   - Shows the note and transcribed text to the user as soon as available.
   - Interface floats in the center of the site above the microphone avatar.
@@ -42,7 +42,7 @@ This document outlines the action plan for implementing a voice feedback feature
 
 - `feedback_prompts/action_prompt.txt` — Text for the action prompt (spoken on hover).
 - `feedback_prompts/request_prompt.txt` — Text for the request prompt (shown/spoken on record start).
-- `feedback/` — Folder to store user feedback notes (with IP and timestamp).
+- No persistence folder is used by the current static-site implementation.
 
 ---
 
@@ -58,19 +58,17 @@ This document outlines the action plan for implementing a voice feedback feature
   - Remind users their input helps improve the site for everyone.
   - Display a short, friendly code of conduct or “be kind” reminder.
 - **Transparency:**
-  - Clearly state that IP and timestamp are recorded for quality and safety.
-  - Assure users their voice is only used for feedback and not shared.
+  - Clearly state that the current implementation keeps processing in the browser session.
+  - Assure users that the static site does not persist feedback, IP addresses, or timestamps.
 
 ---
 
 ## 4. Next Steps (Action Only, No Code Yet)
 
-- Prepare the microphone avatar images (green ackee fruit, and microphone/notebook combo).
-- Create the `feedback_prompts` subfolder and add placeholder text files for prompts.
-- Design the floating modal interface and feedback note display.
-- Plan the logic for recording, transcribing, and storing feedback as described.
-- Review and finalize psychology-based encouragement and privacy messaging.
+- Verify the happy-path recording flow in a normal browser.
+- Keep the modal, prompts, and privacy copy aligned with the static-site scope.
+- Decide separately whether a backend-backed feedback system is actually needed.
 
 ---
 
-_This document is an action plan only. No implementation code is included._
+_This document is an action plan only. Persistence remains out of scope until the project has backend support._

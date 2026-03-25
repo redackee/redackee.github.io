@@ -15,12 +15,14 @@ This document details the implementation requirements and design for the voice f
 ## 2. Audio & Speech-to-Text
 
 - Use Web Audio API or MediaRecorder API for audio capture.
-- Use Vosk WASM for in-browser speech-to-text (preferred), or Whisper-tiny via server if needed.
+- Prefer browser speech recognition when it is available.
+- Use Vosk WASM for in-browser fallback/offline support.
 
 ## 3. Data Handling
 
-- Store each note (with IP and timestamp) in `FUTURE/feedback/` subfolder.
-- Prompts stored in `FUTURE/feedback_prompts/` subfolder.
+- Current static-site checkpoint does not store notes, IP addresses, or timestamps on a server.
+- Prompts are stored in `feedback_prompts/`.
+- Any future persistence work requires a separate backend design decision first.
 
 ## 4. Psychology & Encouragement
 
@@ -29,9 +31,9 @@ This document details the implementation requirements and design for the voice f
 
 ## 5. File Structure
 
-- `FUTURE/feedback_prompts/action_prompt.txt` — Action prompt (spoken on hover)
-- `FUTURE/feedback_prompts/request_prompt.txt` — Request prompt (on record start)
-- `FUTURE/feedback/` — Stores user feedback notes
+- `feedback_prompts/action_prompt.txt` — Action prompt (spoken on hover)
+- `feedback_prompts/request_prompt.txt` — Request prompt (on record start)
+- No feedback storage directory is used by the current static implementation
 
 ---
 

@@ -2,173 +2,103 @@
 
 ## Overview
 
-Successfully migrated from Vosklet to **vosk-browser** (https://github.com/redackee/vosk-browser) for offline speech-to-text transcription in the voice feedback feature.
+The voice feedback feature now uses local `vosk-browser` assets and a browser-first controller instead of the older Vosklet path. The current shipped runtime is `VF 2026-03-25-a`.
 
-## Changes Made
+This repo is a static Jekyll site, so the feature is intentionally scoped to in-browser capture and transcription. It does not send transcripts to a server or persist feedback files.
 
-### 1. **Updated `assets/js/voice-feedback.js`**
+## Current Runtime Shape
 
-#### Replaced Vosklet API with vosk-browser API:
+### Scripts loaded by the site
 
-- Changed from `window.Vosklet` to `window.Vosk.createModel()`
-- Updated model loading to use async `createModel()` function
-- Changed recognizer initialization to use `model.KaldiRecognizer(sampleRate)`
-- Added event listeners for `"result"` and `"partialresult"` events
-- Updated transcription function to use `acceptWaveform()` and `retrieveFinalResult()` methods
+The footer loads the voice stack in this order:
 
-#### Key API Changes:
+1. `assets/js/voice-feedback-core.js`
+2. `assets/wasm/vosk.js`
+3. `assets/js/voice-feedback.js`
 
-```javascript
-// OLD (Vosklet):
-voskletRecognizer = new window.Vosklet.Recognizer({modelPath});
-await voskletRecognizer.init();
+`voice-feedback-core.js` contains pure helper logic that is covered by unit tests. `voice-feedback.js` owns the browser UI, prompt loading, recording flow, modal state, and Vosk/Web Speech orchestration.
 
-// NEW (vosk-browser):
-voskModel = await window.Vosk.createModel(modelUrl);
-voskRecognizer = new voskModel.KaldiRecognizer(sampleRate);
-voskRecognizer.on("result", (message) => { ... });
-```
+### Speech flow
 
-### 2. **Updated `_includes/footer.html`**
+1. The page loads and starts preparing the local Vosk model archive.
+2. If browser speech recognition is available, the controller can use it.
+3. If browser speech recognition is not available, the controller can fall back to local Vosk processing.
+4. The modal shows transcript or failure information in-browser.
 
-Added vosk-browser library from **local assets** (not CDN):
+### Privacy model
 
-```html
-<script
-  type="application/javascript"
-  src="{{ site.baseurl }}/assets/wasm/vosk.js"
-></script>
-```
+- Audio is handled in the browser session.
+- The static site does not record IP addresses.
+- The static site does not store feedback files.
+- The modal explicitly tells the user that feedback is not being sent to a backend.
 
-This loads before the voice-feedback.js script so the `window.Vosk` object is available.
+## What Changed
 
-**File:** `/assets/wasm/vosk.js` (5.5 MB) - Downloaded from npm package vosk-browser@0.0.8
+### Vosklet is no longer the active path
 
-### 3. **Created Model Archive**
+Legacy Vosklet files still exist in `assets/wasm/`, but they are not loaded by the site. The active runtime uses `window.Vosk.createModel()` from the local `vosk.js` asset.
 
-Created `vosk-model-small-en-us-0.15.tar.gz` (39 MB) from the existing model directory:
+### Local asset loading replaced CDN assumptions
 
-```bash
-tar czf vosk-model-small-en-us-0.15.tar.gz vosk-model-small-en-us-0.15/
-```
+The site loads `vosk.js` from local assets, not from a CDN. The model archive is also served locally:
 
-**Location:** `/assets/wasm/vosk-model-small-en-us-0.15.tar.gz`
+- `assets/wasm/vosk.js`
+- `assets/wasm/vosk-model-small-en-us-0.15.tar.gz`
 
-vosk-browser requires models to be in `.tar.gz` format for proper loading and extraction.
+### UI and state handling were expanded
 
-## Files Modified
+The current implementation includes:
 
-1. **`/assets/js/voice-feedback.js`** - Updated voice recognition logic
-2. **`/_includes/footer.html`** - Added vosk-browser CDN script
-3. **`/assets/wasm/`** - Created tar.gz model archive
+- A visible version badge
+- Status and hint text near the avatar
+- A modal for transcript, privacy, and conduct messaging
+- Clear permission-denied and unavailable-browser states
 
-## Files No Longer Needed (Can be removed)
+## Files Relevant To The Migration
 
-- `/assets/wasm/Vosklet.js`
-- `/assets/wasm/Vosklet.wasm`
-- `/assets/wasm/Vosklet.browser.js`
-- `/assets/wasm/load-vosket.js`
-- `/assets/wasm/README-browser.md`
+- `assets/js/voice-feedback-core.js`
+- `assets/js/voice-feedback.js`
+- `_includes/footer.html`
+- `assets/wasm/vosk.js`
+- `assets/wasm/vosk-model-small-en-us-0.15.tar.gz`
+- `tests/voice-feedback-core.test.js`
 
-These were part of the old Vosklet implementation and are no longer used.
+## Validation Notes
 
-## How It Works Now
+### Verified in this repo
 
-### Architecture:
+- The local Jekyll site serves successfully.
+- The integrated browser can inspect the page and widget state.
+- The voice widget advances from `loading` to `ready`.
+- Hover updates the hint text.
+- Activation in the integrated browser correctly surfaces the permission-denied modal because the integrated browser blocks microphone access.
+- Manual happy-path testing in Chrome succeeded with microphone access enabled.
+- Transcript quality is sensitive to environmental noise such as wind, so occasional missing words are expected in poor recording conditions.
+- Unit tests pass for helper logic.
 
-1. **Model Loading:**
+### Important browser limitation
 
-   - vosk-browser library loaded from CDN (jsdelivr)
-   - Model tar.gz downloaded and extracted by vosk-browser worker
-   - Model stored in browser IndexedDB for persistence
+VS Code's integrated browser is useful for UI inspection, but it blocks microphone permission requests. That means:
 
-2. **Transcription Flow:**
+- It is suitable for layout and denied-permission smoke tests.
+- It is not sufficient to validate the happy-path recording flow.
 
-   - **Primary:** Web Speech Recognition API (live, works in Chrome/Edge/Safari)
-   - **Fallback:** MediaRecorder → AudioBlob → vosk-browser offline transcription
+Use a normal browser such as Chrome, Edge, or Safari to verify actual microphone capture and transcript generation when you need to re-check real speech input quality.
 
-3. **Event Flow:**
-   ```
-   User clicks avatar
-   → Request mic permission
-   → Start recording (MediaRecorder)
-   → User speaks
-   → Stop recording
-   → Convert to AudioBuffer
-   → Feed to vosk-browser recognizer.acceptWaveform()
-   → Retrieve final result
-   → Display in modal
-   ```
+## Remaining Cleanup
 
-## Testing
-
-### To test the voice feature:
-
-1. **Open site:** http://127.0.0.1:4000/redackee.github.io/
-2. **Open DevTools Console** (F12 or Cmd+Option+I)
-3. **Look for console messages:**
-
-   - `[voice-feedback] loaded version 2025-10-05-test`
-   - `[vosk-browser] Loading model from: ...`
-   - `[vosk-browser] Model loaded and ready`
-
-4. **Test voice input:**
-   - Hover over avatar in footer → hear prompt
-   - Click avatar → grant mic permission
-   - Speak clearly
-   - See transcription in modal
-
-### Expected Console Output:
-
-```
-[voice-feedback] loaded version 2025-10-05-test
-[vosk-browser] Loading model from: /redackee.github.io/assets/wasm/vosk-model-small-en-us-0.15.tar.gz
-[vosk-browser] Model loaded and ready
-```
-
-## Benefits of vosk-browser
-
-✅ **Actively maintained** - Official browser build from Vosk team  
-✅ **Better API** - Event-driven, cleaner interface  
-✅ **Web Worker** - Runs in background, doesn't block UI  
-✅ **Persistent storage** - Model cached in IndexedDB  
-✅ **CDN available** - Easy to load from jsdelivr  
-✅ **TypeScript support** - Better developer experience  
-✅ **Documentation** - Well-documented with examples
-
-## Performance
-
-- **Model size:** 39 MB compressed (68 MB uncompressed)
-- **First load:** ~5-10 seconds (downloads + extracts model)
-- **Subsequent loads:** Instant (cached in IndexedDB)
-- **Transcription:** Real-time (processes as audio is fed)
-
-## Browser Compatibility
-
-| Feature        | Chrome | Firefox | Safari | Edge |
-| -------------- | ------ | ------- | ------ | ---- |
-| Web Speech API | ✅     | ❌      | ✅     | ✅   |
-| vosk-browser   | ✅     | ✅      | ✅     | ✅   |
-| MediaRecorder  | ✅     | ✅      | ✅     | ✅   |
-
-**Recommendation:** vosk-browser provides offline capability for all browsers, while Web Speech API provides faster results where available.
-
-## Next Steps (Optional)
-
-1. **Remove old Vosklet files** to clean up the repository
-2. **Add loading indicator** while model downloads (first visit)
-3. **Add language selection** if multi-language support is needed
-4. **Optimize model size** - Consider using a smaller model for faster loading
-5. **Add tests** - Automated testing of voice features
+- Remove unused Vosklet-era assets if the repo no longer needs them for reference.
+- Decide whether to keep the current small US English model or replace it with a newer browser-friendly model after separate evaluation.
+- Keep browser-first docs aligned with the static-site constraint.
 
 ## Resources
 
-- **vosk-browser GitHub:** https://github.com/redackee/vosk-browser
-- **vosk-browser Demo:** https://ccoreilly.github.io/vosk-browser/
-- **Vosk Models:** https://alphacephei.com/vosk/models
-- **Web Speech API:** https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API
+- `DOCUMENTS/VOICE_TESTING_GUIDE.md`
+- `DOCUMENTS/LOCAL_VOSK_SETUP.md`
+- https://alphacephei.com/vosk/models
+- https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API
 
 ---
 
-**Migration completed:** October 8, 2025  
-**Version:** VF 2025-10-05-test
+**Migration checkpoint updated:** March 25, 2026  
+**Runtime version:** VF 2026-03-25-a

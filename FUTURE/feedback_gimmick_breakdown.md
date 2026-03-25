@@ -19,13 +19,13 @@
 
 4. **Speech-to-Text**
 
-   - Integrate Vosk WASM for in-browser transcription (preferred).
-   - Optionally, set up server endpoint for Whisper-tiny transcription.
+   - Integrate Vosk WASM for in-browser transcription fallback.
+   - Use browser speech recognition when available.
 
 5. **Feedback Storage**
 
-   - Create `FUTURE/feedback/` subfolder for storing notes.
-   - Store each note with IP address and timestamp.
+   - Current static-site checkpoint: do not store notes server-side.
+   - Future backend phase only: define a real persistence target before adding any storage.
 
 6. **Feedback Modal**
 
@@ -38,7 +38,8 @@
 
 8. **Testing**
    - Test on various devices and browsers for UI, audio, and transcription.
-   - Test privacy and data handling.
+   - Validate the permission-denied path in the integrated browser.
+   - Validate the happy-path microphone flow in a normal browser.
 
 ---
 

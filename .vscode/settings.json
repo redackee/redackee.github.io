@@ -18,5 +18,6 @@
         "titleBar.inactiveBackground": "#84162c99",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#84162c"
+    "peacock.color": "#84162c",
+    "workbench.browser.enableChatTools": true
 }

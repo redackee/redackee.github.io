@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the action plan for implementing a voice feedback feature on the site, based on the plan in `FUTURE.md` and the new UI/UX and behavioral directives provided.
+This document tracks the intended direction for the voice feedback feature and now distinguishes between the current static-site checkpoint and later backend-dependent ideas.
 
 ---
 
@@ -28,9 +28,9 @@ This document outlines the action plan for implementing a voice feedback feature
 
 - **Recording:**
   - Max voice input: 1 minute.
-  - Records IP address and date/time with each input.
-  - Converts voice to English text note.
-  - Stores note in a new `FUTURE/feedback` subfolder.
+  - Converts voice to English text in the browser.
+  - Shows the transcript to the user in a modal.
+  - Does not record IP address or persist feedback on the current static site.
 - **User Feedback Display:**
   - Shows the note and transcribed text to the user as soon as available.
   - Interface floats in the center of the site above the microphone avatar.
@@ -40,9 +40,9 @@ This document outlines the action plan for implementing a voice feedback feature
 
 ## 2. File Structure
 
-- `FUTURE/feedback_prompts/action_prompt.txt` — Text for the action prompt (spoken on hover).
-- `FUTURE/feedback_prompts/request_prompt.txt` — Text for the request prompt (shown/spoken on record start).
-- `FUTURE/feedback/` — Folder to store user feedback notes (with IP and timestamp).
+- `feedback_prompts/action_prompt.txt` — Text for the action prompt (spoken on hover).
+- `feedback_prompts/request_prompt.txt` — Text for the request prompt (shown/spoken on record start).
+- No server-backed feedback storage exists in the current static-site implementation.
 
 ---
 
@@ -58,19 +58,18 @@ This document outlines the action plan for implementing a voice feedback feature
   - Remind users their input helps improve the site for everyone.
   - Display a short, friendly code of conduct or “be kind” reminder.
 - **Transparency:**
-  - Clearly state that IP and timestamp are recorded for quality and safety.
-  - Assure users their voice is only used for feedback and not shared.
+  - Clearly state that the current static site keeps processing in the browser session.
+  - State that IP addresses, timestamps, and feedback files are not persisted by the current implementation.
 
 ---
 
 ## 4. Next Steps (Action Only, No Code Yet)
 
-- Prepare the microphone avatar images (green ackee fruit, and microphone/notebook combo).
-- Create the `FUTURE/feedback_prompts` subfolder and add placeholder text files for prompts.
-- Design the floating modal interface and feedback note display.
-- Plan the logic for recording, transcribing, and storing feedback as described.
-- Review and finalize psychology-based encouragement and privacy messaging.
+- Verify the happy-path microphone flow in a normal browser outside the VS Code integrated browser.
+- Decide whether a future backend is actually desired before designing feedback persistence.
+- Keep the floating modal, privacy copy, and encouragement messaging aligned with the static-site constraint.
+- Evaluate newer Vosk model options separately from the UI work.
 
 ---
 
-_This document is an action plan only. No implementation code is included._
+_This document is an action plan. Backend persistence ideas remain deferred until the project has a non-static architecture._
