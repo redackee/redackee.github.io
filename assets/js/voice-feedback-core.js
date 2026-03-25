@@ -22,6 +22,17 @@
     return safeBaseurl ? `${safeBaseurl}/${safePath}` : `/${safePath}`;
   }
 
+  function buildPreferredAudioConstraints() {
+    return {
+      audio: {
+        autoGainControl: true,
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true
+      }
+    };
+  }
+
   function normalizePromptText(text) {
     return String(text || '').replace(/\s+/g, ' ').trim();
   }
@@ -132,6 +143,7 @@
   return {
     buildAssetUrl,
     buildModalContent,
+    buildPreferredAudioConstraints,
     extractRecognizerText,
     mapRecognitionError,
     normalizePromptText,

@@ -74,6 +74,7 @@ The current implementation includes:
 - Activation in the integrated browser correctly surfaces the permission-denied modal because the integrated browser blocks microphone access.
 - Manual happy-path testing in Chrome succeeded with microphone access enabled.
 - Transcript quality is sensitive to environmental noise such as wind, so occasional missing words are expected in poor recording conditions.
+- A Chrome retest after removing spoken prompt overlap and adding browser audio constraints showed better recognition in the same general conditions.
 - Unit tests pass for helper logic.
 
 ### Important browser limitation

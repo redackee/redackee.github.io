@@ -7,7 +7,7 @@ This document details the implementation requirements and design for the voice f
 - Microphone avatar (green ackee fruit) as a circular button, attached to the top of the footer or floating mid-bottom on large screens.
 - On activation, avatar flips to a microphone/notebook combo image.
 - Hover: border color changes and action prompt is spoken (from `FUTURE/feedback_prompts/action_prompt.txt`).
-- Press and hold (1s) or click: starts recording and shows request prompt (from `FUTURE/feedback_prompts/request_prompt.txt`).
+- Press and hold (1s) or click: starts recording and shows request prompt text (from `feedback_prompts/request_prompt.txt`).
 - Visual indicator during recording.
 - Max voice input: 1 minute.
 - After recording, show a floating modal with the transcribed note, positive message, and privacy/conduct reminders.

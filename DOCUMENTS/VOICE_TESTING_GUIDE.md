@@ -147,7 +147,7 @@ Expected result:
 
 - ✅ Browser asks for microphone permission
 - ✅ Avatar switches to recording state and `aria-pressed="true"`
-- ✅ Text-to-speech plays the request prompt from `feedback_prompts/request_prompt.txt`
+- ✅ The request prompt text is shown when recording starts without competing with microphone capture
 - ✅ Recording indicator appears (check browser UI)
 - ✅ After stopping, modal appears with transcribed text plus privacy/conduct notes
 
@@ -155,6 +155,8 @@ Expected result:
 
 - Wind, room echo, and background noise can reduce transcript completeness.
 - Minor dropped words during outdoor or noisy testing do not necessarily indicate a controller bug.
+- The site avoids speaking the request prompt during capture so the browser does not compete with its own microphone input.
+- A follow-up Chrome retest after this tuning showed better capture of the spoken phrase start.
 - Re-test indoors or closer to the microphone before treating missing words as a code defect.
 
 ### Console Messages:

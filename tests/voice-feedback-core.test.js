@@ -16,6 +16,17 @@ describe('voice-feedback-core', function() {
     expect(core.buildAssetUrl('/redackee.github.io', '/assets/js/voice-feedback.js')).toBe('/redackee.github.io/assets/js/voice-feedback.js');
   });
 
+  it('builds preferred browser audio constraints for noisy environments', function() {
+    expect(core.buildPreferredAudioConstraints()).toEqual({
+      audio: {
+        autoGainControl: true,
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true
+      }
+    });
+  });
+
   it('extracts recognizer text from final and partial results', function() {
     expect(core.extractRecognizerText({ result: { text: 'hello world' } })).toBe('hello world');
     expect(core.extractRecognizerText({ result: { partial: 'hello' } })).toBe('hello');

@@ -22,7 +22,7 @@ This document summarizes the intended direction for the voice feedback feature w
   - Speaks an action prompt (text to be provided; will be loaded from `feedback_prompts/action_prompt.txt`).
 - **Activation:**
   - Press and hold for 1 second, or mouse click, starts recording.
-  - Shows a short message requesting feedback (text to be provided; will be loaded from `feedback_prompts/request_prompt.txt`).
+    - Shows a short on-screen message requesting feedback (text loaded from `feedback_prompts/request_prompt.txt`).
 
 ### Recording & Feedback
 
@@ -41,7 +41,7 @@ This document summarizes the intended direction for the voice feedback feature w
 ## 2. File Structure
 
 - `feedback_prompts/action_prompt.txt` — Text for the action prompt (spoken on hover).
-- `feedback_prompts/request_prompt.txt` — Text for the request prompt (shown/spoken on record start).
+- `feedback_prompts/request_prompt.txt` — Text for the request prompt shown on record start.
 - No persistence folder is used by the current static-site implementation.
 
 ---

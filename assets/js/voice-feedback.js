@@ -237,6 +237,17 @@ document.addEventListener('DOMContentLoaded', function() {
     window.speechSynthesis.speak(new SpeechSynthesisUtterance(content));
   }
 
+  async function showRequestPrompt() {
+    try {
+      const text = await loadPrompt('request_prompt.txt');
+      if (recording) {
+        updateStatus(text || 'Recording started. Speak now, then activate again to stop.');
+      }
+    } catch (error) {
+      console.error('[voice-feedback] Failed to show request prompt', error);
+    }
+  }
+
   async function loadVosk() {
     if (voskLoading || voskReady) {
       return;
@@ -288,13 +299,17 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+
     recording = true;
     audioChunks = [];
     avatar.classList.add('active');
     avatar.setAttribute('aria-pressed', 'true');
     avatar.setAttribute('aria-label', 'Recording in progress. Press Enter or Space to stop.');
     setAvatarState('recording', 'Recording started. Speak now, then activate again to stop.');
-    playPrompt('request_prompt.txt');
+    showRequestPrompt();
 
     if (mode === 'webspeech') {
       startWebSpeechRecognition();
@@ -354,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     try {
-      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStream = await navigator.mediaDevices.getUserMedia(core.buildPreferredAudioConstraints());
       mediaRecorder = new MediaRecorder(mediaStream);
       mediaRecorder.ondataavailable = function(event) {
         if (event.data && event.data.size > 0) {
