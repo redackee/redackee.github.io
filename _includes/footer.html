@@ -46,6 +46,7 @@
       // Expose the runtime baseurl to client-side scripts
       window.siteBaseurl = "{{ site.baseurl | default: '' }}";
     </script>
+    <script src="{{ site.baseurl }}/assets/js/voice-feedback-core.js"></script>
     <!-- vosk-browser library (local) -->
     <script type="application/javascript" src="{{ site.baseurl }}/assets/wasm/vosk.js"></script>
     <script src="{{ site.baseurl }}/assets/js/voice-feedback.js"></script>

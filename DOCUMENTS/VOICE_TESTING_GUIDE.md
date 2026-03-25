@@ -4,6 +4,8 @@
 
 **Site URL:** http://127.0.0.1:4000/redackee.github.io/
 
+**Unit tests:** `npm test`
+
 ---
 
 ## Pre-Test Checklist
@@ -11,6 +13,7 @@
 ✅ Jekyll server running at http://127.0.0.1:4000/redackee.github.io/  
 ✅ Browser has microphone permission capability  
 ✅ Site loaded in browser
+✅ `npm test` passes for extracted voice helpers
 
 ---
 
@@ -20,14 +23,18 @@
 
 1. **Version Badge** (bottom-right corner)
 
-   - Should display: `VF 2025-10-05-test`
+  - Should display: `VF 2026-03-25-a`
    - Location: Fixed position, bottom-right
    - Style: Dark background, white text
 
-2. **Voice Avatar** (in footer)
+2. **Voice Avatar** (footer / floating on large screens)
    - Should display: redackee avatar image
-   - Location: Footer, after author name
-   - Tooltip: "Send voice feedback"
+  - Location: Footer on small screens, bottom-center floating control on larger screens
+  - Label: "Activate voice feedback. Press Enter or Space to record your feedback."
+
+3. **Visible Hint Text**
+  - Should appear next to or below the avatar
+  - Should change as the control moves through loading, ready, recording, and processing states
 
 ### ✅ How to Check:
 
@@ -49,11 +56,9 @@
 
 ```javascript
 // On page load:
-[voice-feedback] loaded version 2025-10-05-test
+[voice-feedback] loaded version 2026-03-25-a
 
-// vosk-browser library check:
-[vosk-browser] Library not loaded. Will use Web Speech API fallback.
-// OR if vosk loads successfully:
+// Vosk startup:
 [vosk-browser] Loading model from: /redackee.github.io/assets/wasm/vosk-model-small-en-us-0.15.tar.gz
 [vosk-browser] Model loaded and ready
 ```
@@ -93,6 +98,18 @@ Site baseurl: /redackee.github.io
 Web Speech API: true (Chrome/Edge/Safari)
 ```
 
+### Unit Test Command:
+
+```bash
+npm test
+```
+
+Expected result:
+
+```text
+✓ tests/voice-feedback-core.test.js
+```
+
 ---
 
 ## Test 3: Hover Interaction
@@ -105,8 +122,9 @@ Web Speech API: true (Chrome/Edge/Safari)
 ### Expected Behavior:
 
 - ✅ Avatar should get `hover` CSS class
-- ✅ Text-to-speech plays: "Welcome to Red Ackee software. Please tell us your idea or leave feedback..."
-- ✅ Avatar may have visual hover effect (check CSS)
+- ✅ Text-to-speech plays the action prompt from `feedback_prompts/action_prompt.txt`
+- ✅ Hint text updates to a ready-state message
+- ✅ Avatar shows a visual hover/ready state
 
 ### ⚠️ Troubleshooting:
 
@@ -120,7 +138,7 @@ Web Speech API: true (Chrome/Edge/Safari)
 
 ### Steps:
 
-1. Click the avatar in the footer
+1. Click the avatar
 2. Browser will request microphone permission → **Allow it**
 3. Speak clearly: "This is a test"
 4. Click the avatar again to stop recording
@@ -128,17 +146,17 @@ Web Speech API: true (Chrome/Edge/Safari)
 ### Expected Behavior:
 
 - ✅ Browser asks for microphone permission
-- ✅ Avatar gets `active` CSS class (visual feedback)
-- ✅ Text-to-speech plays: "Please tell us your feedback or ideas"
+- ✅ Avatar switches to recording state and `aria-pressed="true"`
+- ✅ Text-to-speech plays the request prompt from `feedback_prompts/request_prompt.txt`
 - ✅ Recording indicator appears (check browser UI)
-- ✅ After stopping, modal appears with transcribed text
+- ✅ After stopping, modal appears with transcribed text plus privacy/conduct notes
 
 ### Console Messages:
 
 ```javascript
 [voice-feedback] Starting recording...
 // If Web Speech API is used:
-SpeechRecognition started
+[voice-feedback] Using browser speech recognition.
 // When you speak:
 [Web Speech API] Transcribed: This is a test
 ```
@@ -147,7 +165,8 @@ SpeechRecognition started
 
 ```
 Thank you for your feedback!
-Transcribed: This is a test
+We process your speech in the browser for this site experience.
+[Transcript appears here]
 [Close button]
 ```
 
@@ -261,7 +280,8 @@ performance
 | --------------------- | ------ | ---------------------------- |
 | Page loads            | ✅     | Should be fast               |
 | Version badge visible | ✅     | Bottom-right corner          |
-| Avatar visible        | ✅     | In footer                    |
+| Avatar visible        | ✅     | Footer or floating on desktop |
+| Hint text visible     | ✅     | Tracks current state         |
 | Hover plays audio     | ✅     | Text-to-speech               |
 | Click requests mic    | ✅     | Browser prompt               |
 | Recording works       | ✅     | Visual feedback              |
@@ -269,6 +289,7 @@ performance
 | vosk-browser fallback | ✅     | Firefox or explicit fallback |
 | Transcription shows   | ✅     | In modal                     |
 | Modal closes          | ✅     | Close button works           |
+| Unit tests pass       | ✅     | `npm test`                   |
 
 ---
 
@@ -383,5 +404,5 @@ Copy/paste into browser console:
 ---
 
 **Test Date:** October 8, 2025  
-**Version:** VF 2025-10-05-test  
+**Version:** VF 2026-03-25-a  
 **vosk-browser:** 0.0.8 (local)
