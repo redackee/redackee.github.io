@@ -36,7 +36,7 @@ The footer loads the voice stack in this order:
 
 ### Vosklet is no longer the active path
 
-Legacy Vosklet files still exist in `assets/wasm/`, but they are not loaded by the site. The active runtime uses `window.Vosk.createModel()` from the local `vosk.js` asset.
+The old Vosklet-era assets and loader were removed from the source tree. The active runtime uses `window.Vosk.createModel()` from the local `vosk.js` asset.
 
 ### Local asset loading replaced CDN assumptions
 
@@ -88,7 +88,6 @@ Use a normal browser such as Chrome, Edge, or Safari to verify actual microphone
 
 ## Remaining Cleanup
 
-- Remove unused Vosklet-era assets if the repo no longer needs them for reference.
 - Decide whether to keep the current small US English model or replace it with a newer browser-friendly model after separate evaluation.
 - Keep browser-first docs aligned with the static-site constraint.
 

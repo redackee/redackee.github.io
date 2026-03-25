@@ -43,14 +43,10 @@ The model archive is requested by `voice-feedback.js` through the local base URL
 assets/wasm/
 ├── vosk.js
 ├── vosk-model-small-en-us-0.15.tar.gz
-├── vosk-model-small-en-us-0.15/
-├── Vosklet.js
-├── Vosklet.browser.js
-├── load-vosket.js
-└── README-browser.md
+└── vosk-model-small-en-us-0.15/
 ```
 
-Some Vosklet-era files are still present in the repo, but they are not part of the active runtime path.
+The legacy Vosklet-era loader and shim files have been removed from the source tree because the site no longer uses them.
 
 ## Runtime Notes
 
@@ -73,7 +69,6 @@ Useful checks:
 
 ## Follow-up Options
 
-- Remove unused Vosklet-era assets after confirming nothing depends on them.
 - Evaluate whether a newer Vosk model is worth the download and accuracy tradeoff.
 
 ---
