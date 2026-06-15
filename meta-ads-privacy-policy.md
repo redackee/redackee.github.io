@@ -141,9 +141,9 @@ This policy applies only to our use of Meta Ads. Our website may contain links t
 
 If you have questions about this Meta Ads Privacy Policy, please contact us:
 
-**Red Ackee Software**  
-Email: [Your contact email]  
-Website: [Your website URL]
+**{{ site.title }}**  
+Email: {{ site.social-network-links.email }}  
+Website: https://{{ site.url-pretty }}
 
 ## Additional Resources
 
