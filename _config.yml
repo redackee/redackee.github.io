@@ -29,6 +29,8 @@ navbar-links:
     - ChatGPT: "https://chat.openai.com/"
     - Google Gemini: "https://gemini.google.com/"
     - Microsoft Copilot: "https://copilot.microsoft.com/"
+    - Claude: "https://claude.ai/login"
+  Privacy Policy: "/meta-ads-privacy-policy/"
 #  Author's home: "https://nkosi-dilworth.com"
 
 ################
